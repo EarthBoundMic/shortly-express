@@ -7,9 +7,6 @@ const executeQuery = (query, values) => {
 
 const parseData = options => {
   return _.reduce(options, (parsed, value, key) => {
-    console.log('PARSED: ', parsed);
-    console.log('VALUES: ', value);
-    console.log('KEY: ', key);
     parsed.string.push(`${key} = ?`);
     parsed.values.push(value);
     return parsed;

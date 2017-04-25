@@ -81,16 +81,23 @@ app.post('/links',
 /************************************************************/
 app.post('/signup', (req, res, next) => {
 
-  var user = req.body.username;
+  console.log(req)
+
+  var username = req.body.username;
   var password = utils(req.body.password);
 
 
-  models.Users.get( { username: user } )
+  models.Users.get( { username: username } )
     .then(user => {
       if (user === undefined) {
-        models.Users.create( {username: user, password: password} );
+        res.status(201)
+        models.Users.create( {username: username, password: password} )
+        res.location('/')
         res.render('index');
-        res.send(204);
+
+      } else {
+        res.location('/signup')
+        res.render('signup');
       }
     })
     .error(error => {
@@ -100,25 +107,29 @@ app.post('/signup', (req, res, next) => {
       }
     })
     .catch(user => {
-      console.log('THIS IS THE USER', user);
-      res.status(200).send(user);
+      console.log('CATCH: ', user)
     });
-  
-
-  
-
-
-  // if (checkIfUserExists) {
-  //   res.render('signup');
-  // } else {
-      //   res.render('index');
-  // }
-
-  // console.log(checkIfUserExists);
-  
-
-  res.end();
 })
+
+
+app.post('/login', (req, res, next) => {
+
+  var username = req.body.username;
+  var password = req.body.password;
+
+  models.Users.get( {username: username, password: utils(req.body.password)} )
+  .then(user => {
+    if (user) {
+      res.location('/');
+      res.render('index');
+    } else {
+      res.location('/login');
+      res.render('login');
+    }
+  })
+})
+
+
 
 
 /************************************************************/

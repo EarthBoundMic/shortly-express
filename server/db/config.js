@@ -32,6 +32,14 @@ module.exports = (db) => {
         password VARCHAR(200) NOT NULL,
         timestamp TIMESTAMP
         );`);
+    }).then(() => {
+      return db.queryAsync(`
+        CREATE TABLE IF NOT EXISTS sessions (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          timestamp TIMESTAMP,
+          user_id INT NULL,
+          hash VARCHAR(200) NOT NULL
+      );`);
     })
 
     .error(err => {
