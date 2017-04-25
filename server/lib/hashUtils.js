@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 
-/************************************************************/
-// Add any hashing utility functions below
-/************************************************************/
 
+var HashFunction = (password) => {
+  var hash = crypto.createHmac('sha256', password).digest('hex'); 
+  return hash;
+}
+
+module.exports = HashFunction;

@@ -24,10 +24,15 @@ module.exports = (db) => {
           linkId INT,
           timestamp TIMESTAMP
         );`);
+    }).then(() => {
+      return db.queryAsync(`
+        CREATE TABLE IF NOT EXISTS users (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(200) UNIQUE,
+        password VARCHAR(200) NOT NULL,
+        timestamp TIMESTAMP
+        );`);
     })
-  /************************************************************/
-  /*          Add additional schema queries here              */
-  /************************************************************/
 
     .error(err => {
       console.log(err);
