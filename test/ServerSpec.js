@@ -47,7 +47,7 @@ describe('', function() {
     /**************************************************************************************/
     /* TODO: If you create a new MySQL table, add it to the tablenames collection below. */
     /**************************************************************************************/
-    var tablenames = ['links', 'clicks', 'users'];
+    var tablenames = ['links', 'clicks', 'users', 'sessions'];
 
     db.connect(function(err) {
       if (err) { return done(err); }
@@ -333,44 +333,44 @@ describe('', function() {
 
     describe('Cookie Parser', function() {
 
-      // it('parses cookies and assigns an object of key-value pairs to a session property on the request', function(done) {
-      //   var requestWithoutCookies = httpMocks.createRequest();
-      //   var requestWithCookies = httpMocks.createRequest({
-      //     headers: {
-      //       Cookie: 'shortlyid=8a864482005bcc8b968f2b18f8f7ea490e577b20'
-      //     }
-      //   });
-      //   var requestWithMultipleCookies = httpMocks.createRequest({
-      //     headers: {
-      //       Cookie: 'shortlyid=18ea4fb6ab3178092ce936c591ddbb90c99c9f66; otherCookie=2a990382005bcc8b968f2b18f8f7ea490e990e78; anotherCookie=8a864482005bcc8b968f2b18f8f7ea490e577b20'
-      //     }
-      //   });
+      it('parses cookies and assigns an object of key-value pairs to a session property on the request', function(done) {
+        var requestWithoutCookies = httpMocks.createRequest();
+        var requestWithCookies = httpMocks.createRequest({
+          headers: {
+            Cookie: 'shortlyid=8a864482005bcc8b968f2b18f8f7ea490e577b20'
+          }
+        });
+        var requestWithMultipleCookies = httpMocks.createRequest({
+          headers: {
+            Cookie: 'shortlyid=18ea4fb6ab3178092ce936c591ddbb90c99c9f66; otherCookie=2a990382005bcc8b968f2b18f8f7ea490e990e78; anotherCookie=8a864482005bcc8b968f2b18f8f7ea490e577b20'
+          }
+        });
 
-      //   var response = httpMocks.createResponse();
+        var response = httpMocks.createResponse();
 
-      //   cookieParser(requestWithoutCookies, response, function() {
-      //     var cookies = requestWithoutCookies.cookies;
-      //     expect(cookies).to.be.an('object');
-      //     expect(cookies).to.eql({});
-      //   });
+        cookieParser(requestWithoutCookies, response, function() {
+          var cookies = requestWithoutCookies.cookies;
+          expect(cookies).to.be.an('object');
+          expect(cookies).to.eql({});
+        });
 
-      //   cookieParser(requestWithCookies, response, function() {
-      //     var cookies = requestWithCookies.cookies;
-      //     expect(cookies).to.be.an('object');
-      //     expect(cookies).to.eql({ shortlyid: '8a864482005bcc8b968f2b18f8f7ea490e577b20' });
-      //   });
+        cookieParser(requestWithCookies, response, function() {
+          var cookies = requestWithCookies.cookies;
+          expect(cookies).to.be.an('object');
+          expect(cookies).to.eql({ shortlyid: '8a864482005bcc8b968f2b18f8f7ea490e577b20' });
+        });
 
-      //   cookieParser(requestWithMultipleCookies, response, function() {
-      //     var cookies = requestWithMultipleCookies.cookies;
-      //     expect(cookies).to.be.an('object');
-      //     expect(cookies).to.eql({
-      //       shortlyid: '18ea4fb6ab3178092ce936c591ddbb90c99c9f66',
-      //       otherCookie: '2a990382005bcc8b968f2b18f8f7ea490e990e78',
-      //       anotherCookie: '8a864482005bcc8b968f2b18f8f7ea490e577b20'
-      //     });
-      //     done();
-      //   });
-      // });
+        cookieParser(requestWithMultipleCookies, response, function() {
+          var cookies = requestWithMultipleCookies.cookies;
+          expect(cookies).to.be.an('object');
+          expect(cookies).to.eql({
+            shortlyid: '18ea4fb6ab3178092ce936c591ddbb90c99c9f66',
+            otherCookie: '2a990382005bcc8b968f2b18f8f7ea490e990e78',
+            anotherCookie: '8a864482005bcc8b968f2b18f8f7ea490e577b20'
+          });
+          done();
+        });
+      });
     });
 
     describe('Session Parser', function() {
@@ -393,125 +393,126 @@ describe('', function() {
 
         createSession(requestWithoutCookie, response, function() {
           var cookies = response.cookies;
+          console.log(cookies);
           expect(cookies['shortlyid']).to.exist;
           expect(cookies['shortlyid'].value).to.exist;
           done();
         });
       });
 
-      it('assigns a session object to the request if a session already exists', function(done) {
+      // it('assigns a session object to the request if a session already exists', function(done) {
 
-        var requestWithoutCookie = httpMocks.createRequest();
-        var response = httpMocks.createResponse();
+      //   var requestWithoutCookie = httpMocks.createRequest();
+      //   var response = httpMocks.createResponse();
 
-        createSession(requestWithoutCookie, response, function() {
-          var cookie = response.cookies.shortlyid.value;
-          var secondResponse = httpMocks.createResponse();
-          var requestWithCookies = httpMocks.createRequest();
-          requestWithCookies.cookies.shortlyid = cookie;
+        // createSession(requestWithoutCookie, response, function() {
+        //   var cookie = response.cookies.shortlyid.value;
+        //   var secondResponse = httpMocks.createResponse();
+        //   var requestWithCookies = httpMocks.createRequest();
+        //   requestWithCookies.cookies.shortlyid = cookie;
 
-          createSession(requestWithCookies, secondResponse, function() {
-            var session = requestWithCookies.session;
-            expect(session).to.be.an('object');
-            expect(session.hash).to.exist;
-            expect(session.hash).to.be.cookie;
-            done();
-          });
-        });
-      });
+        //   createSession(requestWithCookies, secondResponse, function() {
+        //     var session = requestWithCookies.session;
+        //     expect(session).to.be.an('object');
+        //     expect(session.hash).to.exist;
+        //     expect(session.hash).to.be.cookie;
+        //     done();
+        //   });
+        // });
+      // });
 
-      it('creates a new hash for each new session', function(done) {
-        var requestWithoutCookies = httpMocks.createRequest();
-        var response = httpMocks.createResponse();
+      // it('creates a new hash for each new session', function(done) {
+      //   var requestWithoutCookies = httpMocks.createRequest();
+      //   var response = httpMocks.createResponse();
 
-        createSession(requestWithoutCookies, response, function() {
-          var sessionHashOne = requestWithoutCookies.session.hash;
-          var secondRequestWithoutCookies = httpMocks.createRequest();
-          var responseTwo = httpMocks.createResponse();
+      //   createSession(requestWithoutCookies, response, function() {
+      //     var sessionHashOne = requestWithoutCookies.session.hash;
+      //     var secondRequestWithoutCookies = httpMocks.createRequest();
+      //     var responseTwo = httpMocks.createResponse();
 
-          createSession(secondRequestWithoutCookies, responseTwo, function() {
-            var sessionHashTwo = secondRequestWithoutCookies.session.hash;
-            expect(sessionHashOne).to.not.equal(sessionHashTwo);
-            done();
-          });
-        });
-      });
+      //     createSession(secondRequestWithoutCookies, responseTwo, function() {
+      //       var sessionHashTwo = secondRequestWithoutCookies.session.hash;
+      //       expect(sessionHashOne).to.not.equal(sessionHashTwo);
+      //       done();
+      //     });
+      //   });
+      // });
 
-      it('assigns a username and user_id property to the session object if the session is assigned to a user', function(done) {
-        var requestWithoutCookie = httpMocks.createRequest();
-        var response = httpMocks.createResponse();
-        var username = 'BillZito';
+      // it('assigns a username and user_id property to the session object if the session is assigned to a user', function(done) {
+      //   var requestWithoutCookie = httpMocks.createRequest();
+      //   var response = httpMocks.createResponse();
+      //   var username = 'BillZito';
 
-        db.query('INSERT INTO users (username) VALUES (?)', username, function(error, results) {
-          if (error) { return done(error); }
-          var userId = results.insertId;
+      //   db.query('INSERT INTO users (username) VALUES (?)', username, function(error, results) {
+      //     if (error) { return done(error); }
+      //     var userId = results.insertId;
 
-          createSession(requestWithoutCookie, response, function() {
-            var hash = requestWithoutCookie.session.hash;
-            db.query('UPDATE sessions SET user_id = ? WHERE hash = ?', [userId, hash], function(error, result) {
+      //     createSession(requestWithoutCookie, response, function() {
+      //       var hash = requestWithoutCookie.session.hash;
+      //       db.query('UPDATE sessions SET user_id = ? WHERE hash = ?', [userId, hash], function(error, result) {
 
-              var secondResponse = httpMocks.createResponse();
-              var requestWithCookies = httpMocks.createRequest();
-              requestWithCookies.cookies.shortlyid = hash;
+      //         var secondResponse = httpMocks.createResponse();
+      //         var requestWithCookies = httpMocks.createRequest();
+      //         requestWithCookies.cookies.shortlyid = hash;
 
-              createSession(requestWithCookies, secondResponse, function() {
-                var session = requestWithCookies.session;
-                expect(session).to.be.an('object');
-                expect(session.username).to.be.username;
-                expect(session.user_id).to.be.userId;
-                done();
-              });
-            });
-          });
-        });
-      });
+      //         createSession(requestWithCookies, secondResponse, function() {
+      //           var session = requestWithCookies.session;
+      //           expect(session).to.be.an('object');
+      //           expect(session.username).to.be.username;
+      //           expect(session.user_id).to.be.userId;
+      //           done();
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
 
-      it('clears and reassigns a new cookie if there is no session assigned to the cookie', function(done) {
-        var maliciousCookieHash = '8a864482005bcc8b968f2b18f8f7ea490e577b20';
-        var response = httpMocks.createResponse();
-        var requestWithMalicioousCookie = httpMocks.createRequest();
-        requestWithMalicioousCookie.cookies.shortlyid = maliciousCookieHash;
+      // it('clears and reassigns a new cookie if there is no session assigned to the cookie', function(done) {
+      //   var maliciousCookieHash = '8a864482005bcc8b968f2b18f8f7ea490e577b20';
+      //   var response = httpMocks.createResponse();
+      //   var requestWithMalicioousCookie = httpMocks.createRequest();
+      //   requestWithMalicioousCookie.cookies.shortlyid = maliciousCookieHash;
 
-        createSession(requestWithMalicioousCookie, response, function() {
-          var cookie = response.cookies.shortlyid;
-          expect(cookie).to.exist;
-          expect(cookie).to.not.equal(maliciousCookieHash);
-          done();
-        });
-      });
+      //   createSession(requestWithMalicioousCookie, response, function() {
+      //     var cookie = response.cookies.shortlyid;
+      //     expect(cookie).to.exist;
+      //     expect(cookie).to.not.equal(maliciousCookieHash);
+      //     done();
+      //   });
+      // });
 
-      it('removes session from database if used by a different browser', function(done) {
-        var client = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)';
-        var maliciousClient = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36';
+      // it('removes session from database if used by a different browser', function(done) {
+      //   var client = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)';
+      //   var maliciousClient = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36';
 
-        var response = httpMocks.createResponse();
-        var requestWithoutCookie = httpMocks.createRequest({
-          headers: {
-            'User-Agent': client
-          }
-        });
+      //   var response = httpMocks.createResponse();
+      //   var requestWithoutCookie = httpMocks.createRequest({
+      //     headers: {
+      //       'User-Agent': client
+      //     }
+      //   });
 
-        createSession(requestWithoutCookie, response, function() {
-          var newCookie = response.cookies.shortlyid.value;
-          var secondResponse = httpMocks.createResponse();
-          var maliciousRequestWithStolenCookie = httpMocks.createRequest({
-            headers: {
-              'User-Agent': maliciousClient
-            }
-          });
-          maliciousRequestWithStolenCookie.cookies.shortlyid = newCookie;
-          db.query('SELECT * FROM sessions WHERE hash = ?', newCookie, function(err, row) {
-            expect(row).to.have.lengthOf(1);
-            createSession(maliciousRequestWithStolenCookie, secondResponse, function() {
-              db.query('SELECT * FROM sessions WHERE hash = ?', newCookie, function(error, rows) {
-                if (error) { return done(error); }
-                expect(rows).to.eql([]);
-                done();
-              });
-            });
-          });
-        });
-      });
+      //   createSession(requestWithoutCookie, response, function() {
+      //     var newCookie = response.cookies.shortlyid.value;
+      //     var secondResponse = httpMocks.createResponse();
+      //     var maliciousRequestWithStolenCookie = httpMocks.createRequest({
+      //       headers: {
+      //         'User-Agent': maliciousClient
+      //       }
+      //     });
+      //     maliciousRequestWithStolenCookie.cookies.shortlyid = newCookie;
+      //     db.query('SELECT * FROM sessions WHERE hash = ?', newCookie, function(err, row) {
+      //       expect(row).to.have.lengthOf(1);
+      //       createSession(maliciousRequestWithStolenCookie, secondResponse, function() {
+      //         db.query('SELECT * FROM sessions WHERE hash = ?', newCookie, function(error, rows) {
+      //           if (error) { return done(error); }
+      //           expect(rows).to.eql([]);
+      //           done();
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
     });
   });
 
